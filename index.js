@@ -7,6 +7,7 @@ const octokit = new Octokit({ auth: token });
 const repo = github.context.repo;
 
 async function merge(source, target) {
+  console.log("Function: merge branch:", source, "to:", target);
   core.info(`merge branch:${source} to: ${target}`);
 
   const response = await octokit.repos.merge({
