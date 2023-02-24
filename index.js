@@ -1,15 +1,35 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
+const github = require("@actions/github");
+const core = require("@actions/core");
+const { Octokit } = require("@octokit/rest");
 
-try {
-  // `who-to-greet` input defined in action metadata file
-  const nameToGreet = core.getInput('who-to-greet');
-  console.log(`Hello ${nameToGreet}!`);
-  const time = (new Date()).toTimeString();
-  core.setOutput("time", time);
-  // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload}`);
-} catch (error) {
-  core.setFailed(error.message);
+const token = core.getInput("github_token");
+const octokit = new Octokit({ auth: token });
+const repo = github.context.repo;
+
+async function merge(source, target) {
+  core.info(`merge branch:${source} to: ${target}`);
+
+  const response = await octokit.repos.merge({
+    owner: repo.owner,
+    repo: repo.repo,
+    base: target,
+    head: source,
+    commit_message: `Merged '${source}' into '${target}'.`,
+  });
 }
+
+async function run() {
+  const source = core.getInput("source");
+  const target = core.getInput("target");
+  core.info(`merge ${source} into ${target}`);
+
+  try {
+    await merge(source, target);
+    await slackMessage(source, target, "success");
+  } catch (error) {
+    await slackMessage(source, target, "failure");
+    core.setFailed(`${source} merge failed: ${error.message}`);
+  }
+}
+
+run();
