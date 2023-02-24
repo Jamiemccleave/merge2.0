@@ -1,13 +1,19 @@
-name: 'Hello World'
-description: 'Greet someone and record the time'
+name: 'Merge'
+description: 'Merge source branch into target branch.'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  github_token:
+    description: 'Token to authenticate with GitHub'
     required: true
-    default: 'World'
-outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+    default: ${{ github.token }}
+  source:
+    description: 'Source branch you want to merge into the target.'
+    required: true
+  target:
+    description: 'Target branch, where the source branch is going to be merged into'
+    required: true
 runs:
-  using: 'node16'
+  using: 'node12'
   main: 'dist/index.js'
+branding:
+  icon: git-merge
+  color: green
