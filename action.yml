@@ -12,7 +12,7 @@ inputs:
     description: "Target branch, where the source branch is going to be merged into"
     required: true
   webhook_url:
-    description: "Slack webhook url"
+    description: "https://hooks.slack.com/services/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"
     required: true
 runs:
   using: "node12"
