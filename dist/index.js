@@ -13993,7 +13993,7 @@ async function slackMessage(source, target, status) {
 
 async function merge(source, target) {
   core.info(`merge branch:${source} to: ${target}`);
-  core.info("Function: merge branch:", source, "to:", target);
+
   const response = await octokit.repos.merge({
     owner: repo.owner,
     repo: repo.repo,
@@ -14010,7 +14010,9 @@ async function run() {
 
   try {
     await merge(source, target);
+    core.info(`merge: success`);
     await slackMessage(source, target, "success");
+    core.info(`slackMessage: success`);
   } catch (error) {
     await slackMessage(source, target, "failure");
     core.setFailed(`${source} merge failed: ${error.message}`);
