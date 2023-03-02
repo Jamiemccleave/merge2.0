@@ -13952,7 +13952,7 @@ const repo = github.context.repo;
 function slackSuccessMessage(source, target, status) {
   return {
     color: "#00c847",
-    icon_emoji: ":rocket:",
+    icon: ":rocket:",
     message: `${source} was successfully merged into ${target}.`,
     // description: `*${target}* can be pushed to production!`,
   };
@@ -13960,8 +13960,8 @@ function slackSuccessMessage(source, target, status) {
 
 function slackErrorMessage(source, target, status) {
   return {
-    color: "#FF0000.",
-    icon_emoji: ":warning:",
+    color: "#FF0000",
+    icon: ":warning:",
     message: `*${source}* has confilct with *${target}*.`,
     description:
       "Multi deploy has failed, this is an emergency, contact for help <@ian> <@jamie>",
