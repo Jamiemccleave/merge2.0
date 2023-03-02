@@ -13951,19 +13951,20 @@ const repo = github.context.repo;
 
 function slackSuccessMessage(source, target, status) {
   return {
-    color: "#27ae60",
-    icon: ":white_check_mark:",
+    color: "#00c847",
+    icon_emoji: ":rocket:",
     message: `${source} was successfully merged into ${target}.`,
-    description: `*${target}* can be pushed to production!`,
+    // description: `*${target}* can be pushed to production!`,
   };
 }
 
 function slackErrorMessage(source, target, status) {
   return {
-    color: "#C0392A",
-    icon: ":red_circle:",
+    color: "#FF0000.",
+    icon_emoji: ":warning:",
     message: `*${source}* has confilct with *${target}*.`,
-    description: ":face_with_head_bandage: Fix me please :pray:",
+    description:
+      "Multi deploy has failed, this is an emergency, contact for help <@ian> <@jamie>",
   };
 }
 
@@ -13984,7 +13985,7 @@ async function slackMessage(source, target, status) {
           title: payload.message,
           text: payload.description,
           color: payload.color,
-          fields: [{ title: "Job Status", value: status, short: false }],
+          // fields: [{ title: "Job Status", value: status, short: false }],
         },
       ],
     });
@@ -14011,6 +14012,7 @@ async function run() {
   try {
     await merge(source, target);
     await slackMessage(source, target, "success");
+    await slackMessage(source, target, "failure");
   } catch (error) {
     await slackMessage(source, target, "failure");
     core.setFailed(`${source} merge failed: ${error.message}`);
