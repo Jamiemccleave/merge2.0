@@ -1,6 +1,6 @@
 const github = require("@actions/github");
 const core = require("@actions/core");
-const Octokit = require("@octokit/rest");
+const { Octokit } = require("@octokit/rest");
 const SlackNotify = require("slack-notify");
 
 const token = core.getInput("github_token");
