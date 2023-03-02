@@ -13942,12 +13942,22 @@ var __webpack_exports__ = {};
 (() => {
 const github = __nccwpck_require__(2726);
 const core = __nccwpck_require__(4181);
-const { Octokit } = __nccwpck_require__(6549);
-const slack = __nccwpck_require__(4152)(core.getInput("webhook_url"));
+const Octokit = __nccwpck_require__(6549);
+const SlackNotify = __nccwpck_require__(4152);
 
 const token = core.getInput("github_token");
 const octokit = new Octokit({ auth: token });
 const repo = github.context.repo;
+const slack = SlackNotify(core.getInput("webhook_url"));
+
+slack
+  .send("Hello!")
+  .then(() => {
+    console.log("done!");
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 
 function slackSuccessMessage(source, target, status) {
   return {

@@ -1,11 +1,21 @@
 const github = require("@actions/github");
 const core = require("@actions/core");
-const { Octokit } = require("@octokit/rest");
-const slack = require("slack-notify")(core.getInput("webhook_url"));
+const Octokit = require("@octokit/rest");
+const SlackNotify = require("slack-notify");
 
 const token = core.getInput("github_token");
 const octokit = new Octokit({ auth: token });
 const repo = github.context.repo;
+const slack = SlackNotify(core.getInput("webhook_url"));
+
+slack
+  .send("Hello!")
+  .then(() => {
+    console.log("done!");
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 
 function slackSuccessMessage(source, target, status) {
   return {
