@@ -6,6 +6,7 @@ const SlackNotify = require("slack-notify");
 const token = core.getInput("github_token");
 const octokit = new Octokit({ auth: token });
 const repo = github.context.repo;
+core.info(core.getInput("webhook_url"));
 const slack = SlackNotify(core.getInput("webhook_url"));
 
 slack
