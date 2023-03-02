@@ -13951,20 +13951,17 @@ const repo = github.context.repo;
 
 function slackSuccessMessage(source, target, status) {
   return {
-    color: "#00c847",
-    icon: ":rocket:",
-    message: `${source} was successfully merged into ${target}.`,
-    // description: `*${target}* can be pushed to production!`,
+    color: "#2EB67D",
+    message: `🚀 [${source}] was successfully merged into [${target}].`,
   };
 }
 
 function slackErrorMessage(source, target, status) {
   return {
-    color: "#FF0000",
-    icon: ":warning:",
-    message: `*${source}* has confilct with *${target}*.`,
+    color: "#E01E5A",
+    message: `[${source}] has confilct with Branch: [${target}].`,
     description:
-      "Multi deploy has failed, this is an emergency, contact for help <@ian> <@jamie>",
+      "🚨 Multi deploy has failed, this is an emergency, contact for help <-@ian> <-@jamie>",
   };
 }
 
@@ -14000,7 +13997,7 @@ async function merge(source, target) {
     repo: repo.repo,
     base: target,
     head: source,
-    commit_message: `Merged '${source}' into '${target}'.`,
+    commit_message: `GitHub Action: Merged '${source}' into '${target}'.`,
   });
 }
 
