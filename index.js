@@ -1,26 +1,11 @@
 const github = require("@actions/github");
 const core = require("@actions/core");
 const { Octokit } = require("@octokit/rest");
-const SlackNotify = require("slack-notify");
+const slack = require("slack-notify")(core.getInput("webhook_url"));
 
 const token = core.getInput("github_token");
 const octokit = new Octokit({ auth: token });
 const repo = github.context.repo;
-const hookurl = core.getInput("webhook_url");
-const hookurl2 = core.getInput("webhook_url2");
-const slack = SlackNotify(hookurl);
-
-core.info(`hook ${hookurl}`);
-core.info(`hook ${hookurl2}`);
-
-slack
-  .send("Hello!")
-  .then(() => {
-    core.info(`done`);
-  })
-  .catch((err) => {
-    console.error(err);
-  });
 
 function slackSuccessMessage(source, target, status) {
   return {
@@ -83,9 +68,7 @@ async function run() {
 
   try {
     await merge(source, target);
-    core.info(`merge: success`);
     await slackMessage(source, target, "success");
-    core.info(`slackMessage: success`);
   } catch (error) {
     await slackMessage(source, target, "failure");
     core.setFailed(`${source} merge failed: ${error.message}`);

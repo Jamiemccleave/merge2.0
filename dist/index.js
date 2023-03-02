@@ -13943,26 +13943,11 @@ var __webpack_exports__ = {};
 const github = __nccwpck_require__(2726);
 const core = __nccwpck_require__(4181);
 const { Octokit } = __nccwpck_require__(6549);
-const SlackNotify = __nccwpck_require__(4152);
+const slack = __nccwpck_require__(4152)(core.getInput("webhook_url"));
 
 const token = core.getInput("github_token");
 const octokit = new Octokit({ auth: token });
 const repo = github.context.repo;
-const hookurl = core.getInput("webhook_url");
-const hookurl2 = core.getInput("webhook_url2");
-const slack = SlackNotify(hookurl);
-
-core.info(`hook ${hookurl}`);
-core.info(`hook ${hookurl2}`);
-
-slack
-  .send("Hello!")
-  .then(() => {
-    core.info(`done`);
-  })
-  .catch((err) => {
-    console.error(err);
-  });
 
 function slackSuccessMessage(source, target, status) {
   return {
@@ -14025,9 +14010,7 @@ async function run() {
 
   try {
     await merge(source, target);
-    core.info(`merge: success`);
     await slackMessage(source, target, "success");
-    core.info(`slackMessage: success`);
   } catch (error) {
     await slackMessage(source, target, "failure");
     core.setFailed(`${source} merge failed: ${error.message}`);
