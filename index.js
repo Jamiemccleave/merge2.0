@@ -8,12 +8,13 @@ const octokit = new Octokit({ auth: token });
 const repo = github.context.repo;
 const hookurl = core.getInput("webhook_url");
 const slack = SlackNotify(hookurl);
-console.log("hook:!".hookurl);
-core.info("hook:".hookurl);
+
+core.info(`hook ${hookurl}`);
+
 slack
   .send("Hello!")
   .then(() => {
-    console.log("done!");
+    core.info(`done`);
   })
   .catch((err) => {
     console.error(err);
