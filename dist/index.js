@@ -13942,7 +13942,7 @@ var __webpack_exports__ = {};
 (() => {
 const github = __nccwpck_require__(2726);
 const core = __nccwpck_require__(4181);
-const Octokit = __nccwpck_require__(6549);
+const { Octokit } = __nccwpck_require__(6549);
 const SlackNotify = __nccwpck_require__(4152);
 
 const token = core.getInput("github_token");
@@ -14003,7 +14003,7 @@ async function slackMessage(source, target, status) {
 
 async function merge(source, target) {
   core.info(`merge branch:${source} to: ${target}`);
-
+  core.info("Function: merge branch:", source, "to:", target);
   const response = await octokit.repos.merge({
     owner: repo.owner,
     repo: repo.repo,
