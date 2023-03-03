@@ -13942,10 +13942,7 @@ var __webpack_exports__ = {};
 (() => {
 const github = __nccwpck_require__(2726);
 const core = __nccwpck_require__(4181);
-const { Octokit } = __nccwpck_require__(6549)({
-  log: console,
-});
-octokit.request("/");
+const { Octokit } = __nccwpck_require__(6549);
 
 const slack = __nccwpck_require__(4152)(core.getInput("webhook_url"));
 

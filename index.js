@@ -1,9 +1,6 @@
 const github = require("@actions/github");
 const core = require("@actions/core");
-const { Octokit } = require("@octokit/rest")({
-  log: console,
-});
-octokit.request("/");
+const { Octokit } = require("@octokit/rest");
 
 const slack = require("slack-notify")(core.getInput("webhook_url"));
 
