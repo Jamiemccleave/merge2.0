@@ -17,9 +17,9 @@ function slackSuccessMessage(source, target, status) {
 function slackErrorMessage(source, target, status) {
   return {
     color: "#E01E5A",
-    message: `[${source}] has confilct with Branch: [${target}].`,
+    message: `Branch: [${source}] has confilct with Branch: [${target}].`,
     description:
-      "🚨 Multi deploy has failed, this is an emergency, contact for help <-@ian> <-@jamie>",
+      "🚨 Multi deploy has failed, this is an emergency, contact for help <@ian> <@jamie>",
   };
 }
 
@@ -35,12 +35,9 @@ async function slackMessage(source, target, status) {
       username: payload.message,
       attachments: [
         {
-          author_name: github.context.payload.repository.full_name,
-          author_link: `https://github.com/${github.context.payload.repository.full_name}/`,
           title: payload.message,
           text: payload.description,
           color: payload.color,
-          // fields: [{ title: "Job Status", value: status, short: false }],
         },
       ],
     });
