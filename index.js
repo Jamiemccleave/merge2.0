@@ -35,6 +35,8 @@ async function slackMessage(source, target, status) {
       username: payload.message,
       attachments: [
         {
+          author_name: github.context.payload.repository.full_name,
+          author_link: `https://github.com/${github.context.payload.repository.full_name}/`,
           title: payload.message,
           text: payload.description,
           color: payload.color,
