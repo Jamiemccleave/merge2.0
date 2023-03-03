@@ -14001,47 +14001,102 @@ async function merge(source, target) {
   const base = target;
   const head = source;
 
-  // set the files to ignore during the merge
-  const filePaths = [
-    "config/settings_data.json",
-    "templates/",
-    "locales/",
-    "templates/*.json",
-  ];
-
-  // create the merge options to ignore the files
-  // const mergeOptions = {
-  //   base,
-  //   head,
-  //   commit_message: `GitHub Action: Merged '${source}' into '${target}'.`,
-  //   merge_method: "merge",
-  //   sha: head,
-  //   // ignore the files during the merge
-  //   file_ignore_regexps: filePaths.map((filePath) => `^${filePath}$`),
-  //   git: {
-  //     args: ["--no-commit --no-ff "],
-  //   },
-  // };
-
-  // merge the branches and ignore the files
-  const response = await octokit.repos.merge({
+  // merge the branches without committing the changes
+  const { data: mergeData } = await octokit.repos.merge({
     owner,
     repo,
     base,
     head,
-    commit_message: `GitHub Action: Merged '${source}' into '${target}'.`,
     merge_method: "merge",
-    sha: head,
-    // ignore the files during the merge
-    file_ignore_regexps: filePaths.map((filePath) => `^${filePath}$`),
-    git: {
-      args: [
-        " --no-edit --no-commit --strategy-option theirs --allow-unrelated-histories ",
-      ],
-    },
+    commit_message: "Merge branches",
   });
 
-  console.log("response", response);
+  // get the current commit SHA for the branch
+  const { data: branchData } = await octokit.git.getRef({
+    owner,
+    repo,
+    ref: `heads/${head}`,
+  });
+
+  const commitSHA = branchData.object.sha;
+
+  // define an array of file paths to checkout
+  const filePaths = [
+    "config/settings_data.json",
+    "templates/*.json",
+    "locales/*.json",
+  ];
+
+  // get the content of the files at the previous commit SHA
+  const fileData = await Promise.all(
+    filePaths.map(async (path) => {
+      const { data } = await octokit.repos.getContent({
+        owner,
+        repo,
+        path,
+        ref: "PREVIOUS_COMMIT_SHA",
+      });
+
+      const content = Buffer.from(data.content, "base64").toString();
+
+      return {
+        path,
+        content,
+      };
+    })
+  );
+
+  // create new blobs for the contents of the files
+  const blobTree = await Promise.all(
+    fileData.map(async ({ path, content }) => {
+      const { data } = await octokit.git.createBlob({
+        owner,
+        repo,
+        content,
+        encoding: "utf-8",
+      });
+
+      return {
+        path,
+        mode: "100644",
+        type: "blob",
+        sha: data.sha,
+      };
+    })
+  );
+
+  // create a new tree with the updated file contents
+  const { data: treeData } = await octokit.git.createTree({
+    owner,
+    repo,
+    tree: blobTree,
+    base_tree: commitSHA,
+  });
+
+  // create a new commit with the updated tree and previous commit as parents
+  const { data: commitData } = await octokit.git.createCommit({
+    owner,
+    repo,
+    message: "Merge with updated files",
+    tree: treeData.sha,
+    parents: [commitSHA, mergeData.sha],
+  });
+
+  // update the branch reference to point to the new commit
+  await octokit.git.updateRef({
+    owner,
+    repo,
+    ref: `heads/${head}`,
+    sha: commitData.sha,
+  });
+
+  // push the changes to the branch
+  await octokit.git.createRef({
+    owner,
+    repo,
+    ref: `refs/heads/${head}`,
+    sha: commitData.sha,
+  });
 }
 
 async function run() {
