@@ -1,6 +1,10 @@
 const github = require("@actions/github");
 const core = require("@actions/core");
-const { Octokit } = require("@octokit/rest");
+const { Octokit } = require("@octokit/rest")({
+  log: console,
+});
+octokit.request("/");
+
 const slack = require("slack-notify")(core.getInput("webhook_url"));
 
 const token = core.getInput("github_token");
@@ -20,7 +24,7 @@ function slackErrorMessage(source, target, status) {
     color: "#E01E5A",
     message: `Branch: [${source}] has confilct with Branch: [${target}].`,
     description:
-      "🚨 Multi deploy has failed, this is an emergency, contact for help <@ian> <@jamie>",
+      "🚨 Multi deploy has failed, this is an emergency, contact for help <-@ian> <-@jamie>",
   };
 }
 
@@ -87,6 +91,8 @@ async function merge(source, target) {
     repo,
     mergeOptions,
   });
+
+  console.log("response", response);
 }
 
 async function run() {

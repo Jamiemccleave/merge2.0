@@ -13942,7 +13942,11 @@ var __webpack_exports__ = {};
 (() => {
 const github = __nccwpck_require__(2726);
 const core = __nccwpck_require__(4181);
-const { Octokit } = __nccwpck_require__(6549);
+const { Octokit } = __nccwpck_require__(6549)({
+  log: console,
+});
+octokit.request("/");
+
 const slack = __nccwpck_require__(4152)(core.getInput("webhook_url"));
 
 const token = core.getInput("github_token");
@@ -13962,7 +13966,7 @@ function slackErrorMessage(source, target, status) {
     color: "#E01E5A",
     message: `Branch: [${source}] has confilct with Branch: [${target}].`,
     description:
-      "🚨 Multi deploy has failed, this is an emergency, contact for help <@ian> <@jamie>",
+      "🚨 Multi deploy has failed, this is an emergency, contact for help <-@ian> <-@jamie>",
   };
 }
 
@@ -14029,6 +14033,8 @@ async function merge(source, target) {
     repo,
     mergeOptions,
   });
+
+  console.log("response", response);
 }
 
 async function run() {
