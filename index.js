@@ -75,13 +75,17 @@ async function merge(source, target) {
     sha: head,
     // ignore the files during the merge
     file_ignore_regexps: filePaths.map((filePath) => `^${filePath}$`),
+    git: {
+      args: ["--no-commit --no-ff "],
+    },
   };
 
+  console.log("mergeOptions", mergeOptions);
   // merge the branches and ignore the files
-  await octokit.repos.merge({
+  const response = await octokit.repos.merge({
     owner,
     repo,
-    ...mergeOptions,
+    mergeOptions,
   });
 }
 
