@@ -14021,13 +14021,11 @@ async function merge(source, target) {
   };
 
   // merge the branches and ignore the file
-  await octokit.repos.merge(
-    octokit.repos({
-      owner,
-      repo,
-      mergeOptions,
-    })
-  );
+  const response = await octokit.repos.merge({
+    owner,
+    repo,
+    mergeOptions,
+  });
 }
 
 async function run() {
