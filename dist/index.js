@@ -14021,11 +14021,7 @@ async function merge(source, target) {
   const commitSHA = branchData.object.sha;
 
   // define an array of file paths to checkout
-  const filePaths = [
-    "config/settings_data.json",
-    "templates/*.json",
-    "locales/*.json",
-  ];
+  const filePaths = ["config/settings_data.json"];
 
   // get the content of the files at the previous commit SHA
   const fileData = await Promise.all(
@@ -14090,13 +14086,13 @@ async function merge(source, target) {
     sha: commitData.sha,
   });
 
-  // push the changes to the branch
-  await octokit.git.createRef({
-    owner,
-    repo,
-    ref: `refs/heads/${head}`,
-    sha: commitData.sha,
-  });
+  // // push the changes to the branch
+  // await octokit.git.createRef({
+  //   owner,
+  //   repo,
+  //   ref: `refs/heads/${head}`,
+  //   sha: commitData.sha,
+  // });
 }
 
 async function run() {
