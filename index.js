@@ -77,11 +77,11 @@ async function merge(source, target) {
     commit_message: `GitHub Action: Merged '${source}' into '${target}'.`,
     merge_method: "merge",
     sha: head,
-    // ignore the files during the merge
-    file_ignore_regexps: filePaths.map((filePath) => `^${filePath}$`),
-    git: {
-      args: ["--no-commit --no-ff "],
-    },
+    // // ignore the files during the merge
+    // file_ignore_regexps: filePaths.map((filePath) => `^${filePath}$`),
+    // git: {
+    //   args: ["--no-commit --no-ff "],
+    // },
   };
 
   console.log("mergeOptions", mergeOptions);
@@ -89,7 +89,7 @@ async function merge(source, target) {
   const response = await octokit.repos.merge({
     owner,
     repo,
-    mergeOptions,
+    // mergeOptions,
   });
 
   console.log("response", response);
@@ -105,6 +105,7 @@ async function run() {
     await slackMessage(source, target, "success");
   } catch (error) {
     await slackMessage(source, target, "failure");
+    console.log(error);
     core.setFailed(`${source} merge failed: ${error.message}`);
   }
 }
