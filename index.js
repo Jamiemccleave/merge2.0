@@ -6,6 +6,7 @@ const slack = require("slack-notify")(core.getInput("webhook_url"));
 const token = core.getInput("github_token");
 const octokit = new Octokit({ auth: token });
 const repo = github.context.repo;
+const hook = core.getInput("webhook_url");
 
 function slackSuccessMessage(source, target, status) {
   return {
@@ -24,14 +25,13 @@ function slackErrorMessage(source, target, status) {
 }
 
 async function slackMessage(source, target, status) {
-  if (core.getInput("webhook_url")) {
+  if (hook) {
     let payload =
       status == "success"
         ? slackSuccessMessage(source, target, status)
         : slackErrorMessage(source, target, status);
 
     slack.send({
-      icon_emoji: payload.icon,
       username: payload.message,
       attachments: [
         {
