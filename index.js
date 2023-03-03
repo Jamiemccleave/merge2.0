@@ -81,7 +81,6 @@ async function merge(source, target) {
   //   },
   // };
 
-  console.log("mergeOptions", mergeOptions);
   // merge the branches and ignore the files
   const response = await octokit.repos.merge({
     owner,
