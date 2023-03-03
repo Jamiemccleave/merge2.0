@@ -80,7 +80,7 @@ async function merge(source, target) {
 
   // merge the branches and ignore the file
   await octokit.repos.merge(
-    octokit.repo({
+    octokit.repos({
       owner,
       repo,
       mergeOptions,
