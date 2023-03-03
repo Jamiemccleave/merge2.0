@@ -5,7 +5,7 @@ const slack = require("slack-notify")(core.getInput("webhook_url"));
 
 const token = core.getInput("github_token");
 const octokit = new Octokit({ auth: token });
-// const repo = github.context.repo;
+const repo = github.context.repo;
 const hook = core.getInput("webhook_url");
 
 function slackSuccessMessage(source, target, status) {
@@ -46,19 +46,9 @@ async function slackMessage(source, target, status) {
   }
 }
 
-// commit_message: `GitHub Action: Merged '${source}' into '${target}'.`,
-
 async function merge(source, target) {
   core.info(`merge branch:${source} to: ${target}`);
   core.info("Function: merge branch:", source, "to:", target);
-
-  // set the owner and repo of the repository
-  const repo = github.context.repo;
-  const owner = repo.owner;
-
-  // set the branch names for the merge
-  const base = target;
-  const head = source;
 
   // set the file to ignore during the merge
   const filePaths = [
@@ -67,22 +57,13 @@ async function merge(source, target) {
     "locales/*.json",
   ];
 
-  // create the merge options to ignore the file
-  const mergeOptions = {
-    base,
-    head,
-    commit_message: `GitHub Action: Merged '${source}' into '${target}'.`,
-    merge_method: "merge",
-    sha: head,
-    // ignore the file during the merge
-    file_ignore_regexps: filePaths.map((filePath) => `^${filePath}$`),
-  };
-
-  // merge the branches and ignore the file
   const response = await octokit.repos.merge({
-    owner,
-    repo,
-    mergeOptions,
+    owner: repo.owner,
+    repo: repo.repo,
+    base: target,
+    head: source,
+    commit_message: `GitHub Action: Merged '${source}' into '${target}'.`,
+    file_ignore_regexps: filePaths.map((filePath) => `^${filePath}$`),
   });
 }
 
