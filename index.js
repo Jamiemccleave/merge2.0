@@ -49,13 +49,33 @@ async function slackMessage(source, target, status) {
 async function merge(source, target) {
   core.info(`merge branch:${source} to: ${target}`);
   core.info("Function: merge branch:", source, "to:", target);
-  const response = await octokit.repos.merge({
-    owner: repo.owner,
-    repo: repo.repo,
-    base: target,
-    head: source,
+
+  // set the files to ignore during the merge
+  const filePaths = [
+    "config/settings_data.json",
+    "templates/*.json",
+    "locales/*.json",
+  ];
+
+  // create the merge options to ignore the files
+  const mergeOptions = {
+    target,
+    source,
     commit_message: `GitHub Action: Merged '${source}' into '${target}'.`,
-  });
+    merge_method: "merge",
+    sha: source,
+    // ignore the files during the merge
+    file_ignore_regexps: filePaths.map((filePath) => `^${filePath}$`),
+  };
+
+  // merge the branches and ignore the files
+  await octokit.repos.merge(
+    octokit.repo({
+      owner,
+      repo,
+      mergeOptions,
+    })
+  );
 }
 
 async function run() {
