@@ -59,8 +59,8 @@ async function merge(source, target) {
 
   // create the merge options to ignore the files
   const mergeOptions = {
-    target,
-    source,
+    base: target,
+    head: source,
     commit_message: `GitHub Action: Merged '${source}' into '${target}'.`,
     merge_method: "merge",
     sha: source,
@@ -71,8 +71,8 @@ async function merge(source, target) {
   // merge the branches and ignore the files
   await octokit.repos.merge(
     octokit.repo({
-      owner,
-      repo,
+      owner: repo.owner,
+      repo: repo.repo,
       mergeOptions,
     })
   );
