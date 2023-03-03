@@ -14017,7 +14017,7 @@ async function merge(source, target) {
     merge_method: "merge",
     sha: head,
     // ignore the file during the merge
-    file_ignore_regexps: [`^${filePath}$`],
+    file_ignore_regexps: filePaths.map((filePath) => `^${filePath}$`),
   };
 
   // merge the branches and ignore the file
