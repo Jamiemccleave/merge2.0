@@ -68,25 +68,36 @@ async function merge(source, target) {
   ];
 
   // create the merge options to ignore the files
-  const mergeOptions = {
-    base,
-    head,
-    commit_message: `GitHub Action: Merged '${source}' into '${target}'.`,
-    merge_method: "merge",
-    sha: head,
-    // // ignore the files during the merge
-    // file_ignore_regexps: filePaths.map((filePath) => `^${filePath}$`),
-    // git: {
-    //   args: ["--no-commit --no-ff "],
-    // },
-  };
+  // const mergeOptions = {
+  //   base,
+  //   head,
+  //   commit_message: `GitHub Action: Merged '${source}' into '${target}'.`,
+  //   merge_method: "merge",
+  //   sha: head,
+  //   // ignore the files during the merge
+  //   file_ignore_regexps: filePaths.map((filePath) => `^${filePath}$`),
+  //   git: {
+  //     args: ["--no-commit --no-ff "],
+  //   },
+  // };
 
   console.log("mergeOptions", mergeOptions);
   // merge the branches and ignore the files
   const response = await octokit.repos.merge({
     owner,
     repo,
-    // mergeOptions,
+    base,
+    head,
+    commit_message: `GitHub Action: Merged '${source}' into '${target}'.`,
+    merge_method: "merge",
+    sha: head,
+    // ignore the files during the merge
+    file_ignore_regexps: filePaths.map((filePath) => `^${filePath}$`),
+    git: {
+      args: [
+        " --no-edit --no-commit --strategy-option theirs --allow-unrelated-histories ",
+      ],
+    },
   });
 
   console.log("response", response);
