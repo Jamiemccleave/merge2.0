@@ -13947,7 +13947,7 @@ const slack = __nccwpck_require__(4152)(core.getInput("webhook_url"));
 
 const token = core.getInput("github_token");
 const octokit = new Octokit({ auth: token });
-const repo = github.context.repo;
+// const repo = github.context.repo;
 const hook = core.getInput("webhook_url");
 
 function slackSuccessMessage(source, target, status) {
@@ -13995,8 +13995,8 @@ async function merge(source, target) {
   core.info("Function: merge branch:", source, "to:", target);
 
   // set the owner and repo of the repository
+  const repo = github.context.repo;
   const owner = repo.owner;
-  const repo = repo.repo;
 
   // set the branch names for the merge
   const base = target;
